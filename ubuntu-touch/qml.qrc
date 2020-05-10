@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Qml/MainPage.qml</file>
+        <file>Qml/LinkDelegate.qml</file>
+        <file>Qml/WebViewer.qml</file>
+        <file>Qml/SettingsPage.qml</file>
+        <file>Qml/SubredditsPage.qml</file>
+        <file>Qml/AboutPage.qml</file>
+        <file>Qml/SubredditDelegate.qml</file>
+        <file>Qml/SubredditsDrawer.qml</file>
+        <file>Qml/CommentsPage.qml</file>
+        <file>Qml/CommentDelegate.qml</file>
+        <file>Icons/message.svg</file>
+        <file>Icons/share.svg</file>
+        <file>Icons/up.svg</file>
+        <file>Icons/down.svg</file>
+        <file>Icons/contextual-menu.svg</file>
+        <file>Icons/navigation-menu.svg</file>
+        <file>Icons/toolkit_arrow-up.svg</file>
+        <file>Icons/toolkit_arrow-down.svg</file>
+        <file>Icons/toolkit_chevron-up_1gu.svg</file>
+        <file>Icons/toolkit_chevron-down_1gu.svg</file>
+        <file>Icons/back.svg</file>
+        <file>Qml/ImageViewPage.qml</file>
+        <file>Qml/ImageViewer.qml</file>
+        <file>Qml/SubredditPage.qml</file>
+        <file>Qml/LoginPage.qml</file>
+        <file>Icons/non-starred.svg</file>
+        <file>Icons/starred.svg</file>
+        <file>Icons/edit-copy.svg</file>
+        <file>Icons/webbrowser-app-symbolic.svg</file>
+        <file>Icons/mail-reply.svg</file>
+        <file>Icons/spinner.svg</file>
+    </qresource>
+</RCC>
