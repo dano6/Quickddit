@@ -80,10 +80,10 @@ Page {
             refresh(subreddit)
             swipeView.setCurrentIndex(tabBar.currentIndex)
             linkListView.parent=swipeView.currentItem
-            comeon.start();
+            //comeon.start();
 
         }
-        PropertyAnimation{id:comeon; target: linkListView; property: "opacity";from:0;to: 1;duration: 1500}
+        //PropertyAnimation{id:comeon; target: linkListView; property: "opacity";from:0;to: 1;duration: 1500}
     }
 
     SwipeView{

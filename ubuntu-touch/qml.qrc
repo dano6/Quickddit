@@ -32,5 +32,8 @@
         <file>Icons/webbrowser-app-symbolic.svg</file>
         <file>Icons/mail-reply.svg</file>
         <file>Icons/spinner.svg</file>
+        <file>Qml/UserPage.qml</file>
+        <file>Qml/VideoViewPage.qml</file>
+        <file>Qml/ytdl_wrapper.py</file>
     </qresource>
 </RCC>
