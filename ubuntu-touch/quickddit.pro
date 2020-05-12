@@ -96,7 +96,6 @@ HEADERS += ../qt-json/json.h
 SOURCES += ../qt-json/json.cpp
 
 RESOURCES += qml.qrc
-
 CONF_FILES += \
     Icons/quickddit.svg \
     clickable.json \

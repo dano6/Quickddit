@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<SaveManager>("quickddit.Core", 1, 0, "SaveManager");
     qmlRegisterType<SubredditManager>("quickddit.Core", 1, 0, "SubredditManager");
     qmlRegisterType<FlairManager>("quickddit.Core", 1, 0, "FlairManager");
-    qmlRegisterType<QMLUtils>("quickddit.Core", 1, 0, "QMLUtils");
 
     QQmlApplicationEngine engine;
     QtWebEngine::initialize();

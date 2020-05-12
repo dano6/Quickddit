@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.2
 import quickddit.Core 1.0
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Suru 2.2
+import io.thp.pyotherside 1.5
 
 import "Qml"
 ApplicationWindow {
@@ -140,9 +141,11 @@ ApplicationWindow {
     AppSettings { id: appSettings }
 
     Settings {
-        id: settings
+        id: persistantSettings
         property string style: "Suru"
-        property string layout: "Compact"
+        property string layout: "Previews"
+        property real scale: 1.0
+        property bool linksInternaly: true
     }
     QuickdditManager {
         id: quickdditManager
@@ -165,7 +168,6 @@ ApplicationWindow {
         }
     }
     // A collections of global utility functions
-    //ToDo: try to use unmodified version from sailfish
     QtObject {
         id: globalUtils
 
@@ -211,12 +213,10 @@ ApplicationWindow {
             else if (/^https?:\/\/i.reddituploads.com\//.test(url))
                 return true;
             // direct image url with image format extension
-            else if (/^https?:\/\/\S+\.(jpe?g|png|gif)/i.test(url)){
+            else if (/^https?:\/\/\S+\.(jpe?g|png|gif)/i.test(url))
                 return true;
-            }
-            else{
+            else
                 return false;
-            }
         }
 
         function redditLink(url) {
@@ -338,29 +338,21 @@ ApplicationWindow {
 
         function openVideoViewPage(url) {
             if (python.isUrlSupported(url)) {
-                pageStack.push(Qt.resolvedUrl("VideoViewPage.qml"), { origUrl: url });
+                pageStack.push(Qt.resolvedUrl("Qml/VideoViewPage.qml"), { origUrl: url });
             } else if ((/^https?:\/\/\S+\.(mp4|avi|mkv|webm)/i.test(url))) {
-                pageStack.push(Qt.resolvedUrl("VideoViewPage.qml"), { videoUrl: url });
+                pageStack.push(Qt.resolvedUrl("Qml/VideoViewPage.qml"), { videoUrl: url });
             } else
                 infoBanner.alert(qsTr("Unsupported video url"));
         }
 
-        function toAbsoluteUrl(url)
-        {
-
-            if (String(url).charAt(0)==='/')
-                return "https://www.reddit.com" + url;
-            else
-                return url;
-        }
         function openLink(url) {
-            url = toAbsoluteUrl(url);
+            url = QMLUtils.toAbsoluteUrl(url);
             if (!url)
                 return;
 
-            //if (previewableVideo(url))
-            //    openVideoViewPage(url);
-            if (previewableImage(url))
+            if (previewableVideo(url))
+                openVideoViewPage(url);
+            else if (previewableImage(url))
                 openImageViewPage(url);
             else if (redditLink(url))
                 openRedditLink(url);
@@ -368,11 +360,10 @@ ApplicationWindow {
                 createOpenLinkDialog(url);
         }
 
-
         function openNonPreviewLink(url, source) {
-            url = toAbsoluteUrl(source)
+            url = QMLUtils.toAbsoluteUrl(url);
             if (url) {
-                source = toAbsoluteUrl(source);
+                source = QMLUtils.toAbsoluteUrl(source);
                 if (source === url) {
                     source = undefined
                 }
@@ -380,17 +371,6 @@ ApplicationWindow {
                 createOpenLinkDialog(url,source);
             }
         }
-
-        /*function toAbsoluteUrl(QMLUtils.toAbsoluteUrl() url)
-        {
-            if (!QUrl(url).isRelative())
-                return url;
-
-            if (url.startsWith('/'))
-                return "https://www.reddit.com" + url;
-            else
-                return "";
-        }*/
 
         function createOpenLinkDialog(url, source) {
             pageStack.push(Qt.resolvedUrl("Qml/WebViewer.qml"), {url: url, source: source});
@@ -434,4 +414,85 @@ ApplicationWindow {
         }
     }
 
+    Python {
+        id: python
+
+        signal videoInfo
+        signal fail(string reason)
+
+        property variant info
+
+        Component.onCompleted: {
+            addImportPath(Qt.resolvedUrl('Qml/'));
+
+            setHandler('log', function(msg) {
+                console.log('python: ' + msg)
+            })
+
+            setHandler('fail', function(msg) {
+                console.log('fail signal: ' + msg)
+                fail(msg)
+            })
+
+            importModule('ytdl_wrapper', function() {})
+        }
+
+        function requestVideoUrlFor(url) {
+            console.log("video url requested " + url)
+            call('ytdl_wrapper.retrieveVideoInfo', [url.toString()], function(result) {
+                if (result === undefined) {
+                    return;
+                }
+
+                console.log(JSON.stringify(result,null,4))
+                info = result
+                videoInfo()
+            })
+        }
+
+        function isUrlSupported(url) {
+            // TODO: now simply matches url against our own simple list. We should query YTDL itself.
+            //console.log("testing ytdl support for url " + url)
+            if (/^https?:\/\/((www|m)\.)?youtube\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/((www|m)\.)?youtu\.be\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/((www)\.)?streamable\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/((www)\.)?livestream\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/my\.mixtape\.moe\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/(.+\.)?twitch.tv\/.+/.test(url)) {
+                return true;
+//            } else if (/^https?:\/\/((www)\.)?vimeo.com\/.+/.test(url)) {
+//                return true;
+            } else if (/^https?:\/\/(www\.)?gfycat\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/((i|m)\.)?imgur\.com\/.+\.gifv$/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/v\.redd\.it\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/(www\.)?pornhub\.com\/view_video\.php.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/(www\.)?hooktube\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/(www\.)?dailymotion\.com\/.+/.test(url)) {
+                return true;
+            } else if (/^https?:\/\/(www\.)?bitchute\.com\/.+/.test(url)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        onError: {
+            console.log('python error: ' + traceback);
+        }
+
+        onReceived: {
+            // asychronous messages from Python arrive here. if not explicitly handled
+            console.log('got message from python: ' + data);
+        }
+    }
 }

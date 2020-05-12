@@ -50,7 +50,6 @@ Item {
             target: commentsList
 
             onMovementStarted: mainItem.swipe.close()
-
         }
 
         leftPadding: 0
@@ -117,6 +116,7 @@ Item {
                 text: model.body
 
                 wrapMode: "Wrap"
+                onLinkActivated: globalUtils.openLink(link)
             }
         }
     }

@@ -8,11 +8,13 @@ import QtQuick.Controls.Suru 2.2
 ItemDelegate {
     id:linkDelegate
     width: parent.width
+
     property bool compact: true
     property variant link
     property VoteManager linkVoteManager
     property SaveManager linkSaveManager
     property bool previewableImage: globalUtils.previewableImage(link.url)
+
     height: Math.max(titulok.height+pic.height,txt.height+titulok.height,thumb.height)+bottomRow.height+info.height
     onClicked: {
         if(!compact)globalUtils.openLink(link.url)
@@ -20,26 +22,23 @@ ItemDelegate {
 
     //info
     Label {
-        padding: 2
         id: info
-        anchors.top: parent.top
-        anchors.left : parent.left
-        anchors.right:  parent.right
+        padding: 3
+        anchors {top: parent.top; left: parent.left; right: parent.right; }
         elide: Text.ElideRight
         text: "<a href='r/"+link.subreddit+"'>"+"r/"+link.subreddit+"</a>"+" ~ <a href='u/"+link.author+"'>"+"u/"+link.author+"</a>"+" ~ "+link.created+" ~ "+link.domain
         onLinkActivated: {
             if(link.charAt(0)=='r')
                 pageStack.push(Qt.resolvedUrl("SubredditPage.qml"),{subreddit:link.slice(2)})
-            if(link.charAt(0)=='u'){}
+            if(link.charAt(0)=='u'){
+                pageStack.push(Qt.resolvedUrl("UserPage.qml"),{username:link.slice(2)})
+            }
         }
     }
     //title
     Label {
-        padding: 10
-        anchors.top: info.bottom
-        anchors.right: parent.right
-        anchors.left: thumb.visible ? thumb.right : parent.left //thumb.right
-        anchors.rightMargin: 10
+        padding: 5
+        anchors {top: info.bottom; right: parent.right; left:thumb.visible ? thumb.right : parent.left;}
         id: titulok
         text: link.title
         elide: Text.ElideRight
@@ -51,7 +50,7 @@ ItemDelegate {
     }
     //text
     Label{
-        padding: 10
+        padding: 6
         anchors.right: parent.right
         anchors.top: titulok.bottom
         anchors.left: thumb.visible ? thumb.right : parent.left
@@ -71,8 +70,8 @@ ItemDelegate {
         //asynchronous: true
         anchors.left: parent.left
         anchors.top: info.bottom
-        width: 140
-        height:visible? 140 : 0// String(link.thumbnailUrl).length>3 ? 140 : 0
+        width: 140*persistantSettings.scale
+        height:visible? width : 0
         id: thumb
         source: String(link.thumbnailUrl).length<3? "http://www.google.com/s2/favicons?domain=" + link.domain : link.thumbnailUrl
         //enabled: !globalUtils.previewableImage(link.url)
@@ -114,7 +113,6 @@ ItemDelegate {
             onPressedChanged: {
                 if(pressed){
                     rect.visible=true
-
                 }
                 else
                     rect.visible=false
@@ -122,6 +120,7 @@ ItemDelegate {
 
         }
     }
+
     //image
     Image {
         asynchronous: true
