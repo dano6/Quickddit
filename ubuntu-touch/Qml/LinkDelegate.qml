@@ -2,20 +2,20 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
 import quickddit.Core 1.0
-import QtQuick.Controls.Suru 2.2
+import QtGraphicalEffects 1.0
 
-//ToDo: rework this page, implement commpact image view
 ItemDelegate {
     id:linkDelegate
-    width: parent.width
 
     property bool compact: true
     property variant link
     property VoteManager linkVoteManager
     property SaveManager linkSaveManager
     property bool previewableImage: globalUtils.previewableImage(link.url)
-
-    height: Math.max(titulok.height+pic.height,txt.height+titulok.height,thumb.height)+bottomRow.height+info.height
+    property bool previewableVideo: globalUtils.previewableVideo(link.url)
+    property bool imgur: /^https?:\/\/((i|m|www)\.)?imgur\.com\//.test(link.url)
+    width: parent.width
+    height: Math.max(titulok.height+pic.height,txt.height+titulok.height,thumb.height)+info.height+bottomRow.height
     onClicked: {
         if(!compact)globalUtils.openLink(link.url)
     }
@@ -23,7 +23,7 @@ ItemDelegate {
     //info
     Label {
         id: info
-        padding: 3
+        padding: 5
         anchors {top: parent.top; left: parent.left; right: parent.right; }
         elide: Text.ElideRight
         text: "<a href='r/"+link.subreddit+"'>"+"r/"+link.subreddit+"</a>"+" ~ <a href='u/"+link.author+"'>"+"u/"+link.author+"</a>"+" ~ "+link.created+" ~ "+link.domain
@@ -45,12 +45,11 @@ ItemDelegate {
         maximumLineCount: compact ? 3 : 9999
         font.pointSize: 12
         font.weight: Font.DemiBold
-
         wrapMode: Text.Wrap
     }
     //text
     Label{
-        padding: 6
+        padding: 5
         anchors.right: parent.right
         anchors.top: titulok.bottom
         anchors.left: thumb.visible ? thumb.right : parent.left
@@ -61,211 +60,35 @@ ItemDelegate {
         font.pointSize: 10
         wrapMode: Text.WordWrap
         textFormat: Text.StyledText
-        clip: true
-        visible: !previewableImage
         onLinkActivated: globalUtils.openLink(link)
     }
     //preview
-    Image {
-        //asynchronous: true
-        anchors.left: parent.left
-        anchors.top: info.bottom
-        width: 140*persistantSettings.scale
-        height:visible? width : 0
-        id: thumb
-        source: String(link.thumbnailUrl).length<3? "http://www.google.com/s2/favicons?domain=" + link.domain : link.thumbnailUrl
-        //enabled: !globalUtils.previewableImage(link.url)
-        visible:  !previewableImage&&!globalUtils.redditLink(link.url) //;globalUtils.previewableImage(link.url)
-        enabled: visible
-        fillMode: Image.PreserveAspectFit
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                globalUtils.openLink(link.url)
-            }
-            enabled: thumb.enabled
-            Rectangle{
-                enabled: thumb.enabled
-                id:rect
-                anchors.fill: parent
-                color: "black"
-                opacity: 0.20
-                visible: false
-            }
-            Rectangle{
-                color: "black"
-                opacity: 0.6
-                anchors{left: parent.left ; right: parent.right; bottom: parent.bottom}
-                height: 40
-                Label {
-                    text: link.domain
-                    color: "white"
-                    font.weight: Font.DemiBold
-                    width: parent.width
-                    anchors.centerIn: parent
-                    horizontalAlignment: "AlignHCenter"
-                    elide: "ElideRight"
-                    wrapMode: "WrapAnywhere"
-                    maximumLineCount: 1
-                }
-            }
-
-            onPressedChanged: {
-                if(pressed){
-                    rect.visible=true
-                }
-                else
-                    rect.visible=false
-            }
-
-        }
+    Thumbnail {
+        id:thumb
+        anchors {left: parent.left; top:info.bottom }
+        video: previewableVideo
+        image: previewableImage
+        urlPost: !globalUtils.redditLink(link.url)&&!video&&!image
+        link: linkDelegate.link
+        visible: urlPost || (image && persistantSettings.compactImages && compact) || (video && persistantSettings.compactVideos)
     }
 
     //image
-    Image {
-        asynchronous: true
-        width: parent.width
-        height: previewableImage?parent.width/link.previewWidth*previewHeight:0
+
+    AlbumView {
+        id: pic
         anchors.top: titulok.bottom
-        id:pic
-        fillMode: Image.PreserveAspectFit
-        enabled: previewableImage
-        source: (previewableImage)? link.previewUrl : ""
-        //BusyIndicator is stealing too much frames
-        Image {
-            id: busy
-            source: "../Icons/spinner.svg"
-            anchors.centerIn: parent
-            visible: parent.status===Image.Loading
-            width: 48
-            height: width
-            Timer{
-                interval: 150
-                onTriggered: busy.rotation+=35
-                running: parent.visible
-                repeat: true
-            }
-        }
+        width: parent.width
+        visible: previewableImage && !(persistantSettings.compactImages && compact)
+        url: previewableImage&&!(compact &&persistantSettings.compactImages) ? (persistantSettings.fullResolutionImages &&!imgur ? link.url : link.previewUrl) : ""
     }
 
-    RowLayout{
-        id:bottomRow
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-
-        ToolButton{
-            id:up
-            flat: true
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            //icon.source: "Icons/up.svg"
-            down: (link.likes ===1 || pressed)
-
-            onClicked: {
-                if (down)
-                    linkVoteManager.vote(link.fullname, VoteManager.Unvote)
-                else
-                    linkVoteManager.vote(link.fullname, VoteManager.Upvote)
-                console.log(link.likes)
-            }
-
-            Image{
-                source: "../Icons/up.svg"
-                width: 24
-                height: 24
-                anchors.centerIn: parent
-            }
-        }
-        Label{
-            id:score
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            horizontalAlignment: "AlignHCenter"
-            text: link.score
-            color:  link.score>0 ? "green" : "red"
-        }
-        ToolButton{
-            id:downn
-            flat: true
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            //icon.source: "Icons/down.svg"
-            down: (link.likes ===-1 || pressed)
-
-            onClicked: {
-                if (down)
-                    linkVoteManager.vote(link.fullname, VoteManager.Unvote)
-                else
-                    linkVoteManager.vote(link.fullname, VoteManager.Downvote)
-            }
-            Image{
-                source: "../Icons/down.svg"
-                width: 24
-                height: 24
-                anchors.centerIn: parent
-            }
-        }
-        ToolButton{
-            id:comment
-            flat: true
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            //icon.source: "../Icons/message.svg"
-            onClicked: {
-                if (compact){
-                    var p = { link: link };
-                    pageStack.push(Qt.resolvedUrl("CommentsPage.qml"), p);
-                }
-                //console.log(icon.width)
-            }
-            Row {
-                anchors.centerIn: parent
-
-                Image{
-                    id:dk
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: "../Icons/message.svg"
-                    width: 24
-                    height: 24
-                }
-                Label{
-                    //anchors.left: dk.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: " "+link.commentsCount
-                }
-            }
-
-        }
-        ToolButton{
-            id:share
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            flat: true
-            //icon.source: "Icons/share.svg"
-            Image{
-                source: "../Icons/share.svg"
-                width: 24
-                height: 24
-                anchors.centerIn: parent
-            }
-        }
-        ToolButton {
-            id:save
-            Layout.fillWidth: true
-            Layout.minimumWidth: bottomRow.width/7
-            flat:true
-            Image {
-                source: link.saved ? "../Icons/starred.svg" : "../Icons/non-starred.svg"
-                width: 24
-                height: 24
-                anchors.centerIn: parent
-            }
-            onClicked: {
-                linkSaveManager.save(link.fullname,!link.saved)
-            }
-        }
+    PostButtonRow {
+        id: bottomRow
+        linkSaveManager: linkDelegate.linkSaveManager
+        linkVoteManager: linkDelegate.linkVoteManager
+        link: linkDelegate.link
+        anchors {bottom: parent.bottom; left: parent.left; right: parent.right}
     }
 }
 

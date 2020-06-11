@@ -8,22 +8,39 @@ import QtQuick.Controls.Suru 2.2
 import io.thp.pyotherside 1.5
 
 import "Qml"
+
 ApplicationWindow {
     visible: true
     width: 376
     height: 644
-    title: "quickddit"
+    title: "Quickddit"
     id:window
 
-    SubredditsDrawer{
+    SubredditsDrawer {
         id:subredditsDrawer
     }
 
-    header: ToolBar{
+
+    ToolTip {
+        id:infoBanner
+        x:parent.width/2-width/2
+        y:parent.height-150
+
+
+        function alert(txt) {
+            infoBanner.show(txt,3000)
+        }
+
+        function warning(txt) {
+            infoBanner.show(txt,5000)
+        }
+    }
+
+     ToolBar{
+         id:tBar
         background: Rectangle {
             color: Suru.secondaryBackgroundColor
         }
-
         RowLayout {
             anchors.fill: parent
 
@@ -47,8 +64,6 @@ ApplicationWindow {
                 visible: pageStack.depth<=1
                 //icon.source: "Icons/navigation-menu.svg"
                 onClicked: subredditsDrawer.open()
-                onPressed: if(!subredditsDrawer.loaded)
-                               subredditsDrawer.refresh(false)
                 Image {
                     anchors.centerIn: parent
                     source: "Icons/navigation-menu.svg"
@@ -94,13 +109,12 @@ ApplicationWindow {
                     MenuSeparator {topPadding: 0; bottomPadding:0}
 
                     MenuItem {
-                        text: quickdditManager.isSignedIn ? "Log out ("+quickdditManager.settings.accountNames[0]+")": "Log in"
+                        text: quickdditManager.isSignedIn ? "Log out ("+appSettings.redditUsername+")": "Log in"
                         onTriggered:{
                             !quickdditManager.isSignedIn ? pageStack.push(Qt.resolvedUrl("Qml/LoginPage.qml")) : logOutDialog.open();
                         }
                         Dialog{
                             id:logOutDialog
-                            //parent: Overlay.overlay
                             title: "Log out"
                             modal: true
                             standardButtons: Dialog.Yes | Dialog.No
@@ -114,14 +128,14 @@ ApplicationWindow {
                         }
                     }
 
-                    MenuSeparator{topPadding: 0; bottomPadding:0}
+                    MenuSeparator { topPadding: 0; bottomPadding:0 }
 
                     MenuItem {
                         text: "Settings"
                         onTriggered: pageStack.push(Qt.resolvedUrl("Qml/SettingsPage.qml"))
                     }
 
-                    MenuSeparator{topPadding: 0; bottomPadding:0}
+                    MenuSeparator { topPadding: 0; bottomPadding:0 }
 
                     MenuItem {
                         text: "About"
@@ -129,6 +143,9 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+        Component.onCompleted: {
+            persistantSettings.toolbarOnBottom ? footer = tBar : header = tBar
         }
     }
 
@@ -143,28 +160,34 @@ ApplicationWindow {
     Settings {
         id: persistantSettings
         property string style: "Suru"
-        property string layout: "Previews"
         property real scale: 1.0
         property bool linksInternaly: true
+        property bool compactImages: false
+        property bool compactVideos: true
+        property bool fullResolutionImages: false
+        property bool toolbarOnBottom: false
+        onToolbarOnBottomChanged: {
+            toolbarOnBottom? header = null : footer = null
+            toolbarOnBottom? footer = tBar : header = tBar
+        }
     }
     QuickdditManager {
         id: quickdditManager
         settings: appSettings
         onAccessTokenFailure: {
             if (code == 299 /* QNetworkReply::UnknownContentError */) {
-                console.warn(qsTr("Please log in again"));
+                infoBanner.warning(qsTr("Please log in again"));
                 pageStack.push(Qt.resolvedUrl("Qml/AppSettingsPage.qml"));
             } else {
-                console.warn(errorString);
+                infoBanner.warning(errorString);
             }
         }
         onAccessTokenSuccess: {
-            console.log("Logged in succesfully");
+            infoBanner.alert("Logged in succesfully");
         }
-        onBusyChanged: {
-            if(pageStack.depth==0&& !quickdditManager.isBusy)
-                pageStack.push(Qt.resolvedUrl("Qml/MainPage.qml"));
-
+        onSignedInChanged: {
+            //if(!quickdditManager.isSignedIn)
+            //    globalUtils.getMainPage().refresh()
         }
     }
     // A collections of global utility functions
@@ -243,6 +266,7 @@ ApplicationWindow {
             return false
         }
 
+
         function openRedditLink(url) {
             var redditLink = parseRedditLink(url);
             if (redditLink === null) {
@@ -260,15 +284,17 @@ ApplicationWindow {
                 if (path[3] === "search") {
                     if (redditLink.queryMap["q"] !== undefined)
                         params["query"] = redditLink.queryMap["q"]
-                    pushOrReplace(Qt.resolvedUrl("Qml/SearchDialog.qml"), params);
+                    pushOrReplace(Qt.resolvedUrl("SearchDialog.qml"), params);
                     return;
                 }
 
                 if (path[3] !== "")
                     params["section"] = path[3];
-                pushOrReplace(Qt.resolvedUrl("Qml/MainPage.qml"), params);
+                //changed
+                pushToMainPage(params)
             } else if (/^\/u(ser)?\/([A-Za-z0-9_-]+)/.test(redditLink.path)) {
                 var username = redditLink.path.split("/")[2];
+                //test
                 pushOrReplace(Qt.resolvedUrl("Qml/UserPage.qml"), {username: username});
             } else if (/^\/message\/compose/.test(redditLink.path)) {
                 params["recipient"] = redditLink.queryMap["to"]
@@ -276,24 +302,26 @@ ApplicationWindow {
                     params["message"] = redditLink.queryMap["message"]
                 if (redditLink.queryMap["subject"] !== null)
                     params["subject"] = redditLink.queryMap["subject"]
-                pushOrReplace(Qt.resolvedUrl("Qml/SendMessagePage.qml"), params);
+                pushOrReplace(Qt.resolvedUrl("SendMessagePage.qml"), params);
             } else if (/^\/search/.test(redditLink.path)) {
                 if (redditLink.queryMap["q"] !== undefined)
                     params["query"] = redditLink.queryMap["q"]
-                pushOrReplace(Qt.resolvedUrl("Qml/SearchDialog.qml"), params);
+                pushOrReplace(Qt.resolvedUrl("SearchDialog.qml"), params);
             } else
                 infoBanner.alert(qsTr("Unsupported reddit url"));
         }
 
-        function pushOrReplace(page, params) {
-            if (pageStack.currentPage.objectName === "subredditsPage") {
-                var mainPage = globalUtils.getMainPage();
-                mainPage.__pushedAttached = false;
-                pageStack.replaceAbove(mainPage, page, params);
-            } else {
-                pageStack.push(page, params)
-            }
+        function pushToMainPage(params) {
+            pageStack.pop(getMainPage())
+            if(params["section"])
+                getMainPage().section=params["section"]
+            getMainPage().refresh(params["subreddit"])
         }
+
+        function pushOrReplace(page, params) {
+            pageStack.push(page, params)
+        }
+
 
         function parseRedditLink(url) {
             var shortLinkRe = /^https?:\/\/redd.it\/([^/]+)\/?/.exec(url);
@@ -373,7 +401,10 @@ ApplicationWindow {
         }
 
         function createOpenLinkDialog(url, source) {
-            pageStack.push(Qt.resolvedUrl("Qml/WebViewer.qml"), {url: url, source: source});
+            if(persistantSettings.linksInternaly)
+                pageStack.push(Qt.resolvedUrl("Qml/WebViewer.qml"), {url: url, source: source});
+            else
+                Qt.openUrlExternally(url)
         }
 
         function createSelectionDialog(title, model, selectedIndex, onAccepted) {

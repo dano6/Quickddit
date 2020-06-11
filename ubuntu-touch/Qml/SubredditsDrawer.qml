@@ -8,18 +8,10 @@ Drawer {
     height: window.height
     width: 250
     dragMargin: 0
-    property bool loaded: false
     property bool signedIn: false
     function showSubreddit(subreddit) {
         var mainPage = globalUtils.getMainPage();
         mainPage.refresh(subreddit);
-    }
-
-    function refresh(dk) {
-        loaded=true
-        subredditModel.section= signedIn ? SubredditModel.PopularSection : SubredditModel.UserAsSubscriberSection
-        subredditModel.submit({"displayName":"All"})
-        subredditModel.refresh(true);
     }
 
     ListView{
@@ -29,7 +21,7 @@ Drawer {
         header:Column{
             width: parent.width
             ItemDelegate{
-            text: "Subscribded"
+            text: "Subscribed"
             width: parent.width
             implicitHeight: Suru.units.gu(6)
             visible: quickdditManager.isSignedIn
@@ -70,9 +62,6 @@ Drawer {
             }
         }
 
-        Component.onCompleted: {
-        }
-
         onAtYEndChanged: {
             if (atYEnd && count > 0 && !subredditModel.busy && subredditModel.canLoadMore)
                 subredditModel.refresh(true);
@@ -82,10 +71,7 @@ Drawer {
         id: subredditModel
         manager: quickdditManager
         section: SubredditModel.UserAsSubscriberSection
-        onError: console.warn(errorString);
-        onBusyChanged: {
-            //if(!subredditModel.busy&& subredditModel.)
-        }
+        onError: infoBanner.warning(errorString);
 
     }
     Connections {
@@ -93,19 +79,13 @@ Drawer {
 
         onSignedInChanged: {
             if (quickdditManager.isSignedIn) {
-                // only load the list if there is an existing list (otherwise wait for page to activate, see above)
-                if (subredditModel.rowCount() === 0)
-                    return;
                 subredditModel.refresh(false)
-                multiredditModel.refresh(false)
+                //multiredditModel.refresh(false)
             } else {
                 subredditModel.clear();
-                multiredditModel.clear();
+                //multiredditModel.clear();
             }
             signedIn=quickdditManager.isSignedIn;
         }
-    }
-    Component.onCompleted: {
-        //subredditModel.refresh(true)
     }
 }

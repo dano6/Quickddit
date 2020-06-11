@@ -196,12 +196,12 @@ SubredditObject parseSubredditThing(const QVariantMap &subredditThing)
     subreddit.setDisplayName(data.value("display_name").toString());
     subreddit.setTitle(data.value("title").toString());
     subreddit.setUrl(data.value("url").toString());
-    subreddit.setHeaderImageUrl(QUrl(data.value("header_img").toString()));
+    subreddit.setHeaderImageUrl(QUrl(unescapeUrl(data.value("header_img").toString())));
     if(!data.value("icon_img").toString().isEmpty())
-        subreddit.setIconUrl(QUrl(data.value("icon_img").toString()));
+        subreddit.setIconUrl(QUrl(unescapeUrl(data.value("icon_img").toString())));
     else
-        subreddit.setIconUrl(QUrl(data.value("community_icon").toString()));
-    subreddit.setBannerBackgroundUrl(QUrl(data.value("banner_background_image").toString()));
+        subreddit.setIconUrl(QUrl(unescapeUrl(data.value("community_icon").toString())));
+    subreddit.setBannerBackgroundUrl(QUrl(unescapeUrl(data.value("banner_background_image").toString())));
     subreddit.setShortDescription(unescapeHtml(data.value("public_description").toString()));
     subreddit.setLongDescription(unescapeHtml(data.value("description_html").toString()));
     subreddit.setSubscribers(data.value("subscribers").toInt());
@@ -232,6 +232,7 @@ void userobjectFromMap(UserObject &userObject, const QVariantMap &userObjectMap)
     userObject.setVerifiedEmail(userObjectMap.value("has_verified_email").toBool());
     userObject.setId(userObjectMap.value("id").toString());
     userObject.setGold(userObjectMap.value("is_gold").toBool());
+    userObject.setIconImg(QUrl(unescapeUrl(userObjectMap.value("icon_img").toString())));
 }
 
 //

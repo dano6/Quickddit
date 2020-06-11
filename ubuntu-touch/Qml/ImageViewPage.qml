@@ -24,7 +24,6 @@ Page {
         manager: quickdditManager
         onError: {
             infoBanner.warning(errorString);
-            console.log(errorString);
         }
     }
     Binding {

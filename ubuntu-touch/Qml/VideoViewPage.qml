@@ -23,6 +23,7 @@ Page {
             }
         }
     }
+
     Component.onCompleted: {
         if (videoUrl === "") {
             // resolve with youtube-dl

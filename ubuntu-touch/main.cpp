@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
     qDebug().nospace() <<QString(qVersion());
     engine.rootContext()->setContextProperty("qtversion", QString(qVersion()));
     engine.rootContext()->setContextProperty("QMLUtils", &qmlUtils);
+    engine.rootContext()->setContextProperty("APP_VERSION", APP_VERSION);
     engine.load(url);
     return app.exec();
 }

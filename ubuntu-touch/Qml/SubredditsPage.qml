@@ -8,6 +8,7 @@ Page {
     title: section
 
     property string  section
+    objectName: "subredditsPage"
 
     header:Item {
         width: parent.width
@@ -39,7 +40,6 @@ Page {
                 width: implicitWidth
             }
             onCurrentIndexChanged: {
-                console.log(currentIndex)
                 swipeView.setCurrentIndex(currentIndex)
 
                 switch(currentItem.text){
@@ -84,7 +84,7 @@ Page {
         currentIndex: tabBar.currentIndex
 
         Item{
-            ListView{
+            ListView {
 
                 anchors.fill: parent
                 id:subredditsView
@@ -100,6 +100,11 @@ Page {
                     if (atYEnd && count > 0 && !subredditModel.busy && subredditModel.canLoadMore)
                         subredditModel.refresh(true);
                 }
+
+                BusyIndicator {
+                    anchors.centerIn: parent
+                    running: subredditsView.count==0
+                }
             }
         }
         Item{}
@@ -112,20 +117,20 @@ Page {
         id: subredditModel
         manager: quickdditManager
         section: SubredditModel.UserAsSubscriberSection
-        onError: console.warn(errorString);
+        onError: infoBanner.warning(errorString);
     }
 
     SubredditManager {
         id: subredditManager
         manager: quickdditManager
         //onSuccess: linkModel.changeSaved(fullname, saved);
-        onError: console.log(errorString);
+        onError: infoBanner.warning(errorString);
     }
 
     MultiredditModel {
         id: multiredditModel
         manager: quickdditManager
-        onError: console.warn(errorString);
+        onError: infoBanner.warning(errorString);
     }
 
     Connections {
@@ -148,7 +153,6 @@ Page {
     {
         subredditModel.section=SubredditModel.UserAsSubscriberSection
         subredditModel.refresh(false)
-        console.log(quickdditManager.isSignedIn)
     }
 
     function showSubreddit(subreddit) {

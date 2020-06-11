@@ -11,7 +11,7 @@ Page {
         settings.localContentCanAccessFileUrls: true
         settings.localContentCanAccessRemoteUrls: true
         profile: WebEngineProfile{
-            persistentCookiesPolicy: WebEngineProfile.ForcePersistentCookies
+            //persistentCookiesPolicy: WebEngineProfile.ForcePersistentCookies
             persistentStoragePath: StandardPaths.writableLocation(StandardPaths.DataLocation).toString().substring(7)
         }
 
@@ -27,14 +27,14 @@ Page {
     Connections {
         target: quickdditManager
         onAccessTokenSuccess: {
-            console.log("Sign in successful! Welcome! :)");
+            infoBanner.alert("Sign in successful! Welcome! :)");
             //inboxManager.resetTimer();
             var mainPage = globalUtils.getMainPage();
             mainPage.refresh("Subscribed");
             pageStack.pop(mainPage);
         }
         onAccessTokenFailure: {
-            console.log("error");
+            infoBanner.warning("error");
         }
     }
     Component.onCompleted: loginPage.url = quickdditManager.generateAuthorizationUrl();

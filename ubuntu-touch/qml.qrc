@@ -9,7 +9,7 @@
         <file>Qml/AboutPage.qml</file>
         <file>Qml/SubredditDelegate.qml</file>
         <file>Qml/SubredditsDrawer.qml</file>
-        <file>Qml/CommentsPage.qml</file>
+        <file>Qml/CommentPage.qml</file>
         <file>Qml/CommentDelegate.qml</file>
         <file>Icons/message.svg</file>
         <file>Icons/share.svg</file>
@@ -35,5 +35,23 @@
         <file>Qml/UserPage.qml</file>
         <file>Qml/VideoViewPage.qml</file>
         <file>Qml/ytdl_wrapper.py</file>
+        <file>Icons/down_b.svg</file>
+        <file>Icons/up_b.svg</file>
+        <file>Qml/ZoomableImage.qml</file>
+        <file>Qml/AlbumView.qml</file>
+        <file>Qml/Thumbnail.qml</file>
+        <file>Icons/media-playback-start.svg</file>
+        <file>Qml/CircleImage.qml</file>
+        <file>Qml/UserPageCommentDelegate.qml</file>
+        <file>Qml/UserPageLinkDelegate.qml</file>
+        <file>Qml/PostButtonRow.qml</file>
+        <file>Qml/AccountsPage.qml</file>
+        <file>Icons/list-add.svg</file>
+        <file>Icons/next.svg</file>
+        <file>Icons/delete.svg</file>
+        <file>Icons/quickddit.svg</file>
+        <file>Icons/quickddit80.png</file>
+        <file>Qml/InfoBanner.qml</file>
+        <file>Icons/edit.svg</file>
     </qresource>
 </RCC>

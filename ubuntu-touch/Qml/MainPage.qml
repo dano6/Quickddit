@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.2
 import quickddit.Core 1.0
 import QtQuick.Controls 2.2
 import Qt.labs.settings 1.0
-import QtQuick.Controls.Suru 2.2
 
 Page {
 
@@ -47,44 +46,50 @@ Page {
     header: TabBar{
         id: tabBar
         contentHeight: undefined
-            //padding: 0
+        //width: parent.width
+        //padding: 0
         TabButton{
-            id:h
+            id:tb0
             text: "Hot"
             width: implicitWidth
-            padding: Suru.units.gu(1)
+            padding:6
 
         }
         TabButton{
+            id:tb1
             text: "New"
             width: implicitWidth
-            padding: Suru.units.gu(1)
+            padding:6
         }
         TabButton{
+            id:tb2
             text: "Top"
             width: implicitWidth
-            padding: Suru.units.gu(1)
+            padding:6
         }
         TabButton{
+            id:tb3
             text: "Controversial"
             width: implicitWidth
-            padding: Suru.units.gu(1)
+            padding:6
         }
         TabButton{
+            id:tb4
             text: "Rising"
             width: implicitWidth
-            padding: Suru.units.gu(1)
+            padding:6
         }
-        onCurrentIndexChanged: {
-            linkModel.section=currentIndex
-            refresh(subreddit)
-            swipeView.setCurrentIndex(tabBar.currentIndex)
-            linkListView.parent=swipeView.currentItem
-            //comeon.start();
 
+        onCurrentIndexChanged: {
+            swipeView.setCurrentIndex(currentIndex)
         }
+        Component.onCompleted: {
+            //persistantSettings.toolbarOnBottom ? footer = tabBar : header = tabBar
+        }
+
         //PropertyAnimation{id:comeon; target: linkListView; property: "opacity";from:0;to: 1;duration: 1500}
     }
+
 
     SwipeView{
         id: swipeView
@@ -104,13 +109,17 @@ Page {
                     id:linkDelegate
                     link:model
                     onClicked: {
-                        var p = { link: model };
-                        pageStack.push(Qt.resolvedUrl("CommentsPage.qml"), p);
+                        var p = { link: model,linkVoteManager1: voteManager, linkSaveManager1:saveManager};
+                        pageStack.push(Qt.resolvedUrl("CommentPage.qml"), p);
                     }
                 }
                 onAtYEndChanged: {
                     if (atYEnd && count > 0 && !linkModel.busy && linkModel.canLoadMore)
                         linkModel.refresh(true);
+                }
+                BusyIndicator {
+                    anchors.centerIn: parent
+                    running: linkListView.count==0
                 }
             }
         }
@@ -120,13 +129,19 @@ Page {
         Item{id:item4}
         onCurrentIndexChanged: {
             tabBar.setCurrentIndex(currentIndex)
+            linkModel.section=currentIndex
+            refresh(subreddit)
+        }
+        onCurrentItemChanged: {
+            linkListView.parent=currentItem
+
         }
     }
 
     LinkModel {
         id: linkModel
         manager: quickdditManager
-        onError: console.log(errorString)
+        onError: infoBanner.warning(errorString)
     }
 
     LinkManager {
@@ -134,17 +149,17 @@ Page {
         manager: quickdditManager
         linkModel: linkModel
         onSuccess: {
-            console.log(message);
+            infoBanner.alert(message);
             pageStack.pop();
         }
-        onError: console.log(errorString);
+        onError: infoBanner.warning(errorString);
     }
 
     VoteManager {
         id: voteManager
         manager: quickdditManager
         onVoteSuccess: linkModel.changeLikes(fullname, likes);
-        onError: console.warn(errorString);
+        onError: infoBanner.warning(errorString);
     }
 
     SaveManager {
@@ -156,6 +171,5 @@ Page {
 
     Component.onCompleted: {
         linkModel.section=0
-        refresh("Subscribed")
     }
 }

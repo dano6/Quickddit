@@ -11,6 +11,5 @@ Page {
 
     Component.onCompleted: {
         webView.url = url;
-
     }
 }

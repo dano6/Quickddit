@@ -9,8 +9,8 @@ Page {
 
     property alias link: commentModel.link
     property alias linkPermalink: commentModel.permalink
-    property VoteManager linkVoteManager
-    property SaveManager linkSaveManager
+    property VoteManager linkVoteManager1
+    property SaveManager linkSaveManager1
 
     function refresh(refreshOlder) {
         commentModel.refresh(refreshOlder);
@@ -25,24 +25,27 @@ Page {
     ListView{
         id:commentsList
         anchors.fill: parent
-        header: LinkDelegate{
+        header: LinkDelegate {
             width: parent.width
             link: commentModel.link
             compact: false
+            linkVoteManager: linkVoteManager1
+            linkSaveManager: linkSaveManager1
         }
 
         model: commentModel
         delegate: CommentDelegate {
             id:commentDelegate
             width: parent.width
-
         }
+
     }
+
     CommentModel {
         id: commentModel
         manager: quickdditManager
         permalink: link.permalink
-        onError: infoBanner.warning(errorString)
+        onError: infoBanner.alert(errorString)
         onCommentLoaded: {
             var rlink = globalUtils.parseRedditLink(permalink)
             var post = rlink.path.split("/").pop()
@@ -54,6 +57,11 @@ Page {
                 commentListView.currentItem.highlight();
             } else {
                 //viewHack.start();
+            }
+        }
+        onBusyChanged: {
+            if(!busy){
+                commentModel.showNewComment();
             }
         }
     }
@@ -103,21 +111,21 @@ Page {
     }
 
     Connections {
-        target: linkVoteManager
-        onVoteSuccess: if (linkVoteManager != commentVoteManager) { commentModel.changeLinkLikes(fullname, likes); }
+        target: linkVoteManager1
+        onVoteSuccess: if (linkVoteManager1 != commentVoteManager) { commentModel.changeLinkLikes(fullname, likes); }
     }
 
     Connections {
-        target: linkSaveManager
-        onSuccess: if (linkSaveManager != commentSaveManager) { commentModel.changeLinkSaved(fullname, saved); }
+        target: linkSaveManager1
+        onSuccess: if (linkSaveManager1 != commentSaveManager) { commentModel.changeLinkSaved(fullname, saved); }
     }
 
     Component.onCompleted: {
         // if we didn't get vote and save managers passed (for updating models in the calling page),
         // we use the local managers
-        if (!linkVoteManager)
-            linkVoteManager = commentVoteManager;
-        if (!linkSaveManager)
-            linkSaveManager = commentSaveManager;
+        if (!linkVoteManager1)
+            linkVoteManager1 = commentVoteManager;
+        if (!linkSaveManager1)
+            linkSaveManager1 = commentSaveManager;
     }
 }
