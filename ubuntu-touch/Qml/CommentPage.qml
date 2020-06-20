@@ -55,8 +55,6 @@ Page {
                 commentListView.positionViewAtIndex(postIndex, ListView.Contain);
                 commentListView.currentIndex = postIndex;
                 commentListView.currentItem.highlight();
-            } else {
-                //viewHack.start();
             }
         }
         onBusyChanged: {

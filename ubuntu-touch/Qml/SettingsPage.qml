@@ -4,9 +4,11 @@ import quickddit.Core 1.0
 
 Page {
     title: "Settings"
+
     ScrollView {
         contentWidth: width
         anchors.fill: parent
+
         Column{
             anchors {left: parent.left;right: parent.right}
 
@@ -44,6 +46,7 @@ Page {
                     onMoved: persistantSettings.scale = value
                 }
             }
+
             ItemDelegate {
                 width: parent.width
                 Label {
@@ -58,8 +61,8 @@ Page {
                         appSettings.preferredVideoSize = currentIndex
                     }
                 }
-
             }
+
             SwitchDelegate {
                 width: parent.width
                 text: "Open links internaly"
@@ -67,12 +70,14 @@ Page {
                 onCheckedChanged: persistantSettings.linksInternaly = checked
                 //enabled: false
             }
+
             SwitchDelegate {
                 width: parent.width
                 text: "ToolBar on bottom"
                 checked: persistantSettings.toolbarOnBottom
                 onCheckedChanged: persistantSettings.toolbarOnBottom = checked
             }
+
             ItemDelegate {
                 width: parent.width
                 text: "Accounts "

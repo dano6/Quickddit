@@ -6,6 +6,7 @@ ItemDelegate {
     property bool markSaved: true
     width: parent.width
     height: info.height+comment.height
+
     Label {
         id:info
         padding: 5

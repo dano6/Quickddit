@@ -2,10 +2,9 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
 import quickddit.Core 1.0
-import QtQuick.Controls.Suru 2.2
 
 Page {
-    title: section
+    title: "Subreddits"
 
     property string  section
     objectName: "subredditsPage"
@@ -13,30 +12,31 @@ Page {
     header:Item {
         width: parent.width
         height: tabBar.height+(search.visible?search.height:0)
+
         TabBar{
             id: tabBar
             width: parent.width
             currentIndex: swipeView.currentIndex
             contentHeight: undefined
-            contentWidth: implicitWidth
+            leftPadding: 10
             TabButton{
                 text: "Subscribed"
-                padding: Suru.units.gu(1)
+                padding: 6
                 width: implicitWidth
             }
             TabButton{
                 text: "Popular"
-                padding: Suru.units.gu(1)
+                padding: 6
                 width: implicitWidth
             }
             TabButton{
                 text: "New"
-                padding: Suru.units.gu(1)
+                padding: 6
                 width: implicitWidth
             }
             TabButton{
                 text: "Search"
-                padding: Suru.units.gu(1)
+                padding: 6
                 width: implicitWidth
             }
             onCurrentIndexChanged: {
@@ -78,12 +78,12 @@ Page {
         }
     }
 
-    SwipeView{
+    SwipeView {
         id: swipeView
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
 
-        Item{
+        Item {
             ListView {
 
                 anchors.fill: parent

@@ -10,34 +10,34 @@ import io.thp.pyotherside 1.5
 import "Qml"
 
 ApplicationWindow {
-    visible: true
-    width: 376
-    height: 644
-    title: "Quickddit"
     id:window
+    title: "Quickddit"
+    visible: true
 
     SubredditsDrawer {
         id:subredditsDrawer
     }
-
 
     ToolTip {
         id:infoBanner
         x:parent.width/2-width/2
         y:parent.height-150
 
-
         function alert(txt) {
-            infoBanner.show(txt,3000)
+            infoBanner.timeout=3000
+            infoBanner.text=txt
+            infoBanner.visible=true
         }
 
         function warning(txt) {
-            infoBanner.show(txt,5000)
+            infoBanner.timeout=5000
+            infoBanner.text=txt
+            infoBanner.visible=true
         }
     }
 
-     ToolBar{
-         id:tBar
+    ToolBar{
+        id:tBar
         background: Rectangle {
             color: Suru.secondaryBackgroundColor
         }
@@ -46,6 +46,8 @@ ApplicationWindow {
 
             ToolButton {
                 width: height
+                hoverEnabled: false
+                visible: pageStack.depth>1
                 //icon.source: "Icons/back.svg"
                 onClicked: {
                     pageStack.pop()
@@ -56,11 +58,11 @@ ApplicationWindow {
                     width: 24
                     height: 24
                 }
-                visible: pageStack.depth>1
             }
 
             ToolButton {
                 width: height
+                hoverEnabled: false
                 visible: pageStack.depth<=1
                 //icon.source: "Icons/navigation-menu.svg"
                 onClicked: subredditsDrawer.open()
@@ -84,6 +86,8 @@ ApplicationWindow {
 
             ToolButton {
                 width: height
+                hoverEnabled: false
+                visible: pageStack.depth<=1
                 // icon.source: "Icons/contextual-menu.svg"
                 Image {
                     anchors.centerIn: parent
@@ -106,8 +110,16 @@ ApplicationWindow {
                         }
                     }
 
-                    MenuSeparator {topPadding: 0; bottomPadding:0}
+                    MenuSeparator {topPadding: 0; bottomPadding: 0 }
+                    
+                    MenuItem {
+                        text: "Messages"
+                        padding: Suru.units.gu(1)
+                        onTriggered: {pageStack.push(Qt.resolvedUrl("Qml/MessagePage.qml"))
+                        }
+                    }
 
+                    MenuSeparator {topPadding: 0; bottomPadding: 0 }
                     MenuItem {
                         text: quickdditManager.isSignedIn ? "Log out ("+appSettings.redditUsername+")": "Log in"
                         onTriggered:{
@@ -118,7 +130,8 @@ ApplicationWindow {
                             title: "Log out"
                             modal: true
                             standardButtons: Dialog.Yes | Dialog.No
-                            Label{
+
+                            Label {
                                 text: "Do you want to log out?"
                             }
                             onAccepted: {
@@ -128,14 +141,14 @@ ApplicationWindow {
                         }
                     }
 
-                    MenuSeparator { topPadding: 0; bottomPadding:0 }
+                    MenuSeparator { topPadding: 0; bottomPadding: 0 }
 
                     MenuItem {
                         text: "Settings"
                         onTriggered: pageStack.push(Qt.resolvedUrl("Qml/SettingsPage.qml"))
                     }
 
-                    MenuSeparator { topPadding: 0; bottomPadding:0 }
+                    MenuSeparator { topPadding: 0; bottomPadding: 0 }
 
                     MenuItem {
                         text: "About"
@@ -171,6 +184,7 @@ ApplicationWindow {
             toolbarOnBottom? footer = tBar : header = tBar
         }
     }
+
     QuickdditManager {
         id: quickdditManager
         settings: appSettings
@@ -186,10 +200,9 @@ ApplicationWindow {
             infoBanner.alert("Logged in succesfully");
         }
         onSignedInChanged: {
-            //if(!quickdditManager.isSignedIn)
-            //    globalUtils.getMainPage().refresh()
         }
     }
+
     // A collections of global utility functions
     QtObject {
         id: globalUtils
@@ -302,7 +315,7 @@ ApplicationWindow {
                     params["message"] = redditLink.queryMap["message"]
                 if (redditLink.queryMap["subject"] !== null)
                     params["subject"] = redditLink.queryMap["subject"]
-                pushOrReplace(Qt.resolvedUrl("SendMessagePage.qml"), params);
+                pushOrReplace(Qt.resolvedUrl("Qml/SendMessagePage.qml"), params);
             } else if (/^\/search/.test(redditLink.path)) {
                 if (redditLink.queryMap["q"] !== undefined)
                     params["query"] = redditLink.queryMap["q"]
@@ -496,8 +509,8 @@ ApplicationWindow {
                 return true;
             } else if (/^https?:\/\/(.+\.)?twitch.tv\/.+/.test(url)) {
                 return true;
-//            } else if (/^https?:\/\/((www)\.)?vimeo.com\/.+/.test(url)) {
-//                return true;
+                //            } else if (/^https?:\/\/((www)\.)?vimeo.com\/.+/.test(url)) {
+                //                return true;
             } else if (/^https?:\/\/(www\.)?gfycat\.com\/.+/.test(url)) {
                 return true;
             } else if (/^https?:\/\/((i|m)\.)?imgur\.com\/.+\.gifv$/.test(url)) {

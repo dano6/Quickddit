@@ -9,6 +9,7 @@ Rectangle {
     radius: width;
     color:"white"
     clip: true
+
     Image{
         anchors.centerIn: parent
         id:image

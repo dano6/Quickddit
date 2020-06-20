@@ -1,6 +1,5 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtWebEngine/QtWebEngine>
 #include <QQuickStyle>
 #include <QQmlContext>
 #include <QSettings>
@@ -54,7 +53,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<FlairManager>("quickddit.Core", 1, 0, "FlairManager");
 
     QQmlApplicationEngine engine;
-    QtWebEngine::initialize();
 
     app.setOrganizationName("quickddit");
     app.setOrganizationDomain("dkland");

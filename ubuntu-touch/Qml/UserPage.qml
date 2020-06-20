@@ -7,6 +7,7 @@ Page {
 
     property string username;
     property bool myself: appSettings.redditUsername === username && username !== ""
+
     ListView {
         anchors.fill: parent
         header: Column {
@@ -35,6 +36,10 @@ Page {
                 }
                 Button {
                     text: "Send message"
+                    onClicked: {
+                        pageStack.push(Qt.resolvedUrl("SendMessagePage.qml"),
+                                       {messageManager: messageManager, recipient: username});
+                    }
 
                 }
             }

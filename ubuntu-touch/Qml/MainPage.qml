@@ -10,7 +10,7 @@ Page {
     objectName: "mainPage"
     title: subreddit
 
-    property string subreddit
+    property string subreddit: quickdditManager.isSignedIn ? "Subscribed" : "All"
     property string section
 
     function refresh(sr) {
@@ -43,11 +43,12 @@ Page {
     }
 
 
-    header: TabBar{
+    header:
+        TabBar{
         id: tabBar
         contentHeight: undefined
-        //width: parent.width
-        //padding: 0
+        leftPadding: 10
+
         TabButton{
             id:tb0
             text: "Hot"
@@ -83,11 +84,6 @@ Page {
         onCurrentIndexChanged: {
             swipeView.setCurrentIndex(currentIndex)
         }
-        Component.onCompleted: {
-            //persistantSettings.toolbarOnBottom ? footer = tabBar : header = tabBar
-        }
-
-        //PropertyAnimation{id:comeon; target: linkListView; property: "opacity";from:0;to: 1;duration: 1500}
     }
 
 
@@ -103,16 +99,28 @@ Page {
                 model: linkModel
                 cacheBuffer: height*3
 
+                Label {
+                    anchors { bottom: linkListView.contentItem.top; horizontalCenter: parent.horizontalCenter; margins: 75 }
+                    text: "Pull to refresh..."
+                }
+
                 delegate: LinkDelegate{
                     linkSaveManager: saveManager
                     linkVoteManager: voteManager
                     id:linkDelegate
                     link:model
+
                     onClicked: {
                         var p = { link: model,linkVoteManager1: voteManager, linkSaveManager1:saveManager};
                         pageStack.push(Qt.resolvedUrl("CommentPage.qml"), p);
                     }
                 }
+
+                onContentYChanged: {
+                    if(contentY<=-150 && !linkModel.busy)
+                        linkModel.refresh(false)
+                }
+
                 onAtYEndChanged: {
                     if (atYEnd && count > 0 && !linkModel.busy && linkModel.canLoadMore)
                         linkModel.refresh(true);

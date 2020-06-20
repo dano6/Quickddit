@@ -6,8 +6,8 @@ import quickddit.Core 1.0
 Item {
     id: commentDelegate
     property alias listItem: mainItem
-    signal  move
-    height: mainItem.height +moreChildrenLoader.height
+
+    height: mainItem.height + (moreChildrenLoader.visible ? moreChildrenLoader.height: 0)
     Row {
         id:lineRow
         anchors{left: parent.left; top: parent.top; bottom: parent.bottom}
@@ -56,6 +56,7 @@ Item {
         topPadding: 0
         swipe.left:ToolButton {
             height: parent.height
+            hoverEnabled: false
             width: 40
             anchors { top: parent.top;bottom: parent.bottom; left: parent.left }
             enabled: quickdditManager.isSignedIn && !commentVoteManager.busy && !model.isArchived && model.isValid
@@ -74,6 +75,7 @@ Item {
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 visible: model.isAuthor && !model.isArchived
                 Image {
                     anchors.centerIn: parent
@@ -90,6 +92,7 @@ Item {
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 visible: model.isAuthor && !model.isArchived
                 Image {
                     anchors.centerIn: parent
@@ -106,6 +109,7 @@ Item {
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 Image {
                     anchors.centerIn: parent
                     source: "../Icons/mail-reply.svg"
@@ -121,6 +125,7 @@ Item {
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 Image {
                     anchors.centerIn: parent
                     source: "../Icons/edit-copy.svg"
@@ -129,12 +134,15 @@ Item {
                 }
                 onClicked: {
                     mainItem.swipe.close()
-                    QMLUtils.copyToClipboard(model.body);
+                    QMLUtils.copyToClipboard(model.rawBody);
+                    infoBanner.alert("Comment coppied to clipboard")
                 }
             }
+
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 enabled: quickdditManager.isSignedIn && !commentSaveManager.busy
                 Image {
                     anchors.centerIn: parent
@@ -148,6 +156,7 @@ Item {
             ToolButton {
                 height: parent.height
                 width: 40
+                hoverEnabled: false
                 enabled: quickdditManager.isSignedIn && !commentVoteManager.busy && !model.isArchived && model.isValid
                 Image {
                     anchors.centerIn: parent
@@ -161,7 +170,7 @@ Item {
         }
         contentItem:Item{
             width: parent.width
-            height: info.height+comment.height
+            height: parent.height
 
             Label {
                 id:info
@@ -284,6 +293,7 @@ Item {
                     Button {
                         id: cancelButton
                         text: "Cancel"
+                        visible: model.view !== "new"
                         onClicked: {
                             commentModel.setView(model.fullname, "");
                         }

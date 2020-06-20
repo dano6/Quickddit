@@ -3,10 +3,7 @@ import QtQuick.Controls 2.2
 import quickddit.Core 1.0
 
 Page {
-
-    ButtonGroup {
-        id: buttonGroup
-    }
+    title: "Accounts"
 
     ListView {
         id:accountsView
@@ -18,10 +15,13 @@ Page {
             width: parent.width
             text: modelData
             highlighted: modelData === appSettings.redditUsername
+
             ToolButton {
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 height: parent.height
+                hoverEnabled: false
+
                 Image {
                     height: 24
                     width: 24
@@ -39,6 +39,7 @@ Page {
                 pageStack.pop(globalUtils.getMainPage(),StackView.ReplaceTransition)
             }
         }
+
         footer: ItemDelegate {
             width: parent.width
             text: "Add new account"

@@ -1,4 +1,4 @@
-QT += quick webengine quickcontrols2 network
+QT += quick quickcontrols2 network
 TARGET = quickddit
 CONFIG += c++11
 TEMPLATE =app
@@ -14,9 +14,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-DEFINES += APP_VERSION=\\\"$$VERSION\\\" Q_OS_UBUNTU
-
+DEFINES += Q_OS_UBUNTU APP_VERSION=\\\"1.9.9\\\"
 INCLUDEPATH += ../
 
 SOURCES += \

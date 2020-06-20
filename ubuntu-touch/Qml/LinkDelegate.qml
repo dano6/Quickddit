@@ -14,10 +14,13 @@ ItemDelegate {
     property bool previewableImage: globalUtils.previewableImage(link.url)
     property bool previewableVideo: globalUtils.previewableVideo(link.url)
     property bool imgur: /^https?:\/\/((i|m|www)\.)?imgur\.com\//.test(link.url)
+
     width: parent.width
     height: Math.max(titulok.height+pic.height,txt.height+titulok.height,thumb.height)+info.height+bottomRow.height
+
     onClicked: {
-        if(!compact)globalUtils.openLink(link.url)
+        if(!compact&&!globalUtils.redditLink(link.url))
+            globalUtils.openLink(link.url)
     }
 
     //info
@@ -49,11 +52,11 @@ ItemDelegate {
     }
     //text
     Label{
+        id:txt
         padding: 5
         anchors.right: parent.right
         anchors.top: titulok.bottom
         anchors.left: thumb.visible ? thumb.right : parent.left
-        id:txt
         text:(compact? link.rawText : link.text)
         elide: Text.ElideRight
         maximumLineCount: compact ? 3:9999
@@ -65,16 +68,14 @@ ItemDelegate {
     //preview
     Thumbnail {
         id:thumb
-        anchors {left: parent.left; top:info.bottom }
+        anchors {left: parent.left; top:info.bottom; leftMargin: 5 }
         video: previewableVideo
         image: previewableImage
         urlPost: !globalUtils.redditLink(link.url)&&!video&&!image
         link: linkDelegate.link
         visible: urlPost || (image && persistantSettings.compactImages && compact) || (video && persistantSettings.compactVideos)
     }
-
     //image
-
     AlbumView {
         id: pic
         anchors.top: titulok.bottom

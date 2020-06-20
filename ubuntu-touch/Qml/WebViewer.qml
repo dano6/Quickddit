@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 Page {
     title: webView.title
     property url url
+
     WebEngineView{
         anchors.fill: parent
         id:webView

@@ -35,11 +35,13 @@ Page {
             font.pointSize: 18
             anchors{ left: logo.right;bottom: name.top;leftMargin: 20}
         }
+
         Label {
             id:name
             text: "r/"+aboutSubredditManager.subreddit
             anchors{left: logo.right;bottom: logo.bottom;leftMargin: 20}
         }
+
         Button {
             anchors{top: logo.bottom;right: parent.right;margins: 5}
             id:subButton
@@ -83,7 +85,6 @@ Page {
             onLinkActivated: globalUtils.openLink(link)
         }
     }
-
 
     AboutSubredditManager{
         id:aboutSubredditManager

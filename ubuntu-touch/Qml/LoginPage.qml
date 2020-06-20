@@ -11,7 +11,6 @@ Page {
         settings.localContentCanAccessFileUrls: true
         settings.localContentCanAccessRemoteUrls: true
         profile: WebEngineProfile{
-            //persistentCookiesPolicy: WebEngineProfile.ForcePersistentCookies
             persistentStoragePath: StandardPaths.writableLocation(StandardPaths.DataLocation).toString().substring(7)
         }
 

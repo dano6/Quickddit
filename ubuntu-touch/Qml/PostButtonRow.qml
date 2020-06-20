@@ -5,17 +5,18 @@ import quickddit.Core 1.0
 
 Row{
     id:bottomRow
+
     property variant link
     property VoteManager linkVoteManager
     property SaveManager linkSaveManager
 
-    ToolButton{
+    ToolButton {
         id:up
         flat: true
+        hoverEnabled: false
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width/6
         //icon.source: "Icons/up.svg"
-        //down: (link.likes ===1 || pressed)
 
         onClicked: {
             if (link.likes ===1)
@@ -40,14 +41,14 @@ Row{
         horizontalAlignment: "AlignHCenter"
         color:  link.score>0 ? "green" : "red"
     }
-    ToolButton{
+    ToolButton {
         id:downn
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width/6
         flat: true
+        hoverEnabled: false
         enabled: quickdditManager.isSignedIn
         //icon.source: "Icons/down.svg"
-        //down: (link.likes ===-1 || pressed)
 
         onClicked: {
             if (link.likes ===-1)
@@ -63,11 +64,13 @@ Row{
             smooth: true
         }
     }
-    ToolButton{
+
+    ToolButton {
         id:comment
         width: parent.width/6
         anchors.verticalCenter: parent.verticalCenter
         flat: true
+        hoverEnabled: false
         //icon.source: "../Icons/message.svg"
         onClicked: {
             if (compact){
@@ -91,28 +94,33 @@ Row{
             }
         }
     }
-    ToolButton{
+
+    ToolButton {
         id:share
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width/6
         flat: true
+        hoverEnabled: false
         //icon.source: "Icons/share.svg"
         Image{
-            source: "../Icons/share.svg"
+            source: "../Icons/edit-copy.svg"
             width: 24
             height: 24
             anchors.centerIn: parent
         }
         onClicked: {
             QMLUtils.copyToClipboard(link.url)
+            infoBanner.alert("Link coppied to clipboard")
         }
     }
+
     ToolButton {
         id:save
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width/6
         enabled: quickdditManager.isSignedIn
         flat:true
+        hoverEnabled: false
         Image {
             source: link.saved ? "../Icons/starred.svg" : "../Icons/non-starred.svg"
             width: 24

@@ -4,7 +4,9 @@ import quickddit.Core 1.0
 
 //TODO: make it zoomable
 Image {
+
     fillMode: Image.PreserveAspectFit
+
     Image {
         id: busy
         source: "../Icons/spinner.svg"

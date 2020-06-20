@@ -19,6 +19,7 @@ Page {
             flickable: f
         }
     }
+
     ImgurManager {
         id: imgurManager
         manager: quickdditManager
@@ -26,6 +27,7 @@ Page {
             infoBanner.warning(errorString);
         }
     }
+
     Binding {
         target: viewer
         property: "source"

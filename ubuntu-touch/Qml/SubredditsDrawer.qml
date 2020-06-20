@@ -1,7 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import quickddit.Core 1.0
-import QtQuick.Controls.Suru 2.2
 
 Drawer {
     id:subredditsDrawer
@@ -21,41 +20,36 @@ Drawer {
         header:Column{
             width: parent.width
             ItemDelegate{
-            text: "Subscribed"
-            width: parent.width
-            implicitHeight: Suru.units.gu(6)
-            visible: quickdditManager.isSignedIn
-            onClicked: {
-                showSubreddit(text);
-                subredditsDrawer.close();
+                text: "Subscribed"
+                width: parent.width
+                visible: quickdditManager.isSignedIn || subredditsDrawer.position<0.1
+                onClicked: {
+                    showSubreddit(text);
+                    subredditsDrawer.close();
+                }
             }
-        }
             ItemDelegate{
-            text: "All"
-            width: parent.width
-            implicitHeight: Suru.units.gu(6)
-            onClicked: {
-                showSubreddit(text);
-                subredditsDrawer.close();
+                text: "All"
+                width: parent.width
+                onClicked: {
+                    showSubreddit(text);
+                    subredditsDrawer.close();
+                }
             }
-        }
             ItemDelegate{
-            text: "Popular"
-            width: parent.width
-            implicitHeight: Suru.units.gu(6)
-            onClicked: {
-                showSubreddit(text);
-                subredditsDrawer.close();
+                text: "Popular"
+                width: parent.width
+                onClicked: {
+                    showSubreddit(text);
+                    subredditsDrawer.close();
+                }
             }
-        }
         }
 
         delegate: ItemDelegate{
             id:subredditDelegate
             width: parent.width
             text: model.displayName
-            implicitHeight: Suru.units.gu(6)
-            //highlighted: ListView.isCurrentItem
             onClicked: {
                 showSubreddit(subredditDelegate.text);
                 subredditsDrawer.close();
@@ -67,6 +61,7 @@ Drawer {
                 subredditModel.refresh(true);
         }
     }
+
     SubredditModel {
         id: subredditModel
         manager: quickdditManager
@@ -74,6 +69,7 @@ Drawer {
         onError: infoBanner.warning(errorString);
 
     }
+
     Connections {
         target: quickdditManager
 

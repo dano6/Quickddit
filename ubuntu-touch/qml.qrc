@@ -51,7 +51,9 @@
         <file>Icons/delete.svg</file>
         <file>Icons/quickddit.svg</file>
         <file>Icons/quickddit80.png</file>
-        <file>Qml/InfoBanner.qml</file>
         <file>Icons/edit.svg</file>
+        <file>Qml/MessagePage.qml</file>
+        <file>Qml/MessageDelegate.qml</file>
+        <file>Qml/SendMessagePage.qml</file>
     </qresource>
 </RCC>

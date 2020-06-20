@@ -9,7 +9,7 @@ ItemDelegate {
     property variant manager
     width: parent.width
     height: Math.max(ico.height+10,titleText.height + fullText.height+20)
-    Image{
+    Image {
         id:ico
         width: 64
         height: 64
@@ -25,15 +25,15 @@ ItemDelegate {
         }
     }
 
-    Label{
+    Label {
+        id:titleText
         anchors{left: ico.right;right: parent.right;top: parent.top;margins: 5}
         elide: "ElideRight"
-        id:titleText
         text: "/r/"+model.displayName+" ("+model.title+")"
         font.bold: true
     }
-    Label{
-        //width: parent.width
+
+    Label {
         id:fullText
         anchors{top: titleText.bottom;left: ico.right;right: parent.right;margins: 5}
         text: model.shortDescription

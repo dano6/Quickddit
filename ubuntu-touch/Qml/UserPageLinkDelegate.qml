@@ -27,6 +27,7 @@ ItemDelegate {
             }
         }
     }
+
     //title
     Label {
         padding: 5
@@ -39,6 +40,7 @@ ItemDelegate {
         font.weight: Font.DemiBold
         wrapMode: Text.Wrap
     }
+
     //text
     Label{
         padding: 5
@@ -52,10 +54,11 @@ ItemDelegate {
         font.pointSize: 10
         wrapMode: Text.WordWrap
     }
+
     //preview
     Thumbnail {
         id:thumb
-        anchors {left: parent.left; top:info.bottom }
+        anchors {left: parent.left; top:info.bottom; leftMargin: 5 }
         video: previewableVideo
         image: previewableImage
         urlPost: !globalUtils.redditLink(model.url)&&!video&&!image
