@@ -23,7 +23,7 @@ ItemDelegate {
             if(link.charAt(0)=='r')
                 pageStack.push(Qt.resolvedUrl("SubredditPage.qml"),{subreddit:link.slice(2)})
             if(link.charAt(0)=='u'){
-                pageStack.push(Qt.resolvedUrl("UserPage.qml"),{username:link.slice(2)})
+                pageStack.push(Qt.resolvedUrl("UserPage.qml"),{username:link.slice(2).split(" ")[0]})
             }
         }
     }

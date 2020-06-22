@@ -105,7 +105,6 @@ ApplicationWindow {
 
                     MenuItem {
                         text: "My Subreddits"
-                        padding: Suru.units.gu(1)
                         onTriggered: {pageStack.push(Qt.resolvedUrl("Qml/SubredditsPage.qml"))
                         }
                     }
@@ -114,7 +113,6 @@ ApplicationWindow {
                     
                     MenuItem {
                         text: "Messages"
-                        padding: Suru.units.gu(1)
                         onTriggered: {pageStack.push(Qt.resolvedUrl("Qml/MessagePage.qml"))
                         }
                     }
@@ -172,7 +170,6 @@ ApplicationWindow {
 
     Settings {
         id: persistantSettings
-        property string style: "Suru"
         property real scale: 1.0
         property bool linksInternaly: true
         property bool compactImages: false

@@ -178,7 +178,7 @@ Item {
                 text:"<a href='"+model.author+"'>"+"u/" +model.author+"</a>"+ " ~ " + (model.score < 0 ? "-" : "") +  qsTr("%n points", "", Math.abs(model.score)) + " ~ "+ model.created
 
                 onLinkActivated: {
-                    pageStack.push(Qt.resolvedUrl("UserPage.qml"),{username:link})
+                    pageStack.push(Qt.resolvedUrl("UserPage.qml"),{username:link.split(" ")[0]})
                 }
             }
 

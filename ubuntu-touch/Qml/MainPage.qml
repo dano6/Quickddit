@@ -49,12 +49,11 @@ Page {
         contentHeight: undefined
         leftPadding: 10
 
-        TabButton{
+        TabButton {
             id:tb0
             text: "Hot"
             width: implicitWidth
             padding:6
-
         }
         TabButton{
             id:tb1
