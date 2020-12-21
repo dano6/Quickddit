@@ -4,6 +4,14 @@ CONFIG += c++11
 TEMPLATE =app
 
 AppID= quickddit
+
+
+equals(FLAVOR, "uuitk") {
+    CONFIG += flavor_uuitk
+} else {
+    CONFIG += flavor_qtcontrols
+}
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
@@ -96,40 +104,41 @@ HEADERS += ../qt-json/json.h
 SOURCES += ../qt-json/json.cpp
 
 RESOURCES += qml.qrc
-CONF_FILES += \
+
+isEmpty(PREFIX) {
+    flavor_uuitk {
+        PREFIX = /
+    } else {
+        PREFIX = /usr/local
+    }
+}
+
+CLICK_FILES += \
     Icons/quickddit.svg \
     Icons/quickddit-splash-image.svg \
-    clickable.json \
-    manifest.json \
-    quickddit.desktop \
-    quickddit.apparmor
+    click/clickable.json \
+    click/manifest.json \
+    click/quickddit.desktop \
+    click/quickddit.apparmor
 
+flavor_uuitk {
+    click_files.path = $${PREFIX}
+    click_files.files += $${CLICK_FILES}
+    INSTALLS += click_files
 
-config_files.path = /
-config_files.files += $${CONF_FILES}
-INSTALLS += config_files
-
-youtube-dl.files = ../youtube-dl/youtube_dl
-youtube-dl.path = /
-
-INSTALLS += youtube-dl
+    youtube-dl.files = ../youtube-dl/youtube_dl
+    youtube-dl.path = $$PREFIX
+    INSTALLS += youtube-dl
+}
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
-
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /
-!isEmpty(target.path): INSTALLS += target
+target.path = $${PREFIX}/bin
+INSTALLS += target
 
-DISTFILES += \
-    Icons/quickddit.svg \
-    Icons/quickddit-splash-image.svg \
-    clickable.json \
-    manifest.json \
-    quickddit.desktop \
-    quickddit.apparmor
+DISTFILES += $${CLICK_FILES}

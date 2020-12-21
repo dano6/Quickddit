@@ -1,5 +1,0 @@
-{
-	"src_dir": "${ROOT}/ubuntu-touch/",
-        "builder": "qmake",
-        "kill": "quickddit"
-}

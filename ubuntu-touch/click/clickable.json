@@ -1,0 +1,8 @@
+{
+        "src_dir": "${ROOT}/ubuntu-touch/",
+        "builder": "qmake",
+        "build_args": [
+            "FLAVOR=uuitk"
+        ],
+        "kill": "quickddit"
+}
