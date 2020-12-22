@@ -131,13 +131,21 @@ flavor_uuitk {
     INSTALLS += youtube-dl
 }
 
+flavor_qtcontrols {
+    desktop_file.path = $${PREFIX}/share/applications
+    desktop_file.files += click/quickddit.desktop
+    icon_file.path = $${PREFIX}/share/icons/hicolor/scalable/apps/
+    icon_file.files += Icons/quickddit.svg
+
+    INSTALLS += desktop_file icon_file
+
+}
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
-# Default rules for deployment.
 target.path = $${PREFIX}/bin
 INSTALLS += target
 
