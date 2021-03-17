@@ -74,5 +74,13 @@
         <file>Icons/quickddit-splash-image.svg</file>
         <file>Qml/Flair.qml</file>
         <file>Icons/save.svg</file>
+        <file>Qml/RichTextEditor.qml</file>
+        <file>Icons/editor/font-color-symbolic.svg</file>
+        <file>Icons/editor/font-select-symbolic.svg</file>
+        <file>Icons/editor/font-size-symbolic.svg</file>
+        <file>Icons/editor/format-text-bold-symbolic.svg</file>
+        <file>Icons/editor/format-text-italic-symbolic.svg</file>
+        <file>Icons/editor/format-text-strikethrough-symbolic.svg</file>
+        <file>Icons/editor/insert-link-symbolic.svg</file>
     </qresource>
 </RCC>

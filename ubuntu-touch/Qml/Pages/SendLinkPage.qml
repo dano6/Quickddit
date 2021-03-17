@@ -19,6 +19,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import quickddit.Core 1.0
+import "../"
 
 Page {
     id: newLinkPage
@@ -56,7 +57,7 @@ Page {
 
     Flickable {
         id: scrollView
-        anchors.fill: parent
+        anchors { fill: parent; margins: 10 }
         contentHeight: mainContentColumn.height
         contentWidth: width
 
@@ -64,9 +65,10 @@ Page {
             id: mainContentColumn
             width: parent.width
             spacing: 10
+            bottomPadding: 300
 
             Label {
-                anchors {right: parent.right; }
+                anchors { right: parent.right; }
                 text: "/r/" + subreddit
             }
 
@@ -95,13 +97,18 @@ Page {
                 //errorHighlight: activeFocus && !acceptableInput
             }
 
-            TextArea {
+            RichTextEditor {
                 id: linkDescription
                 anchors { left: parent.left; right: parent.right }
-                placeholderText: qsTr("Post Text")
-                wrapMode: TextEdit.WordWrap
-                enabled: selfLinkSwitch.checked
+                enabled: selfLinkSwitch.checked && !previewBtn.checked
                 visible: enabled
+            }
+
+            Label {
+                anchors.top: linkDescription.top
+                textFormat: "StyledText"
+                text: linkDescription.text
+                visible: previewBtn.checked
             }
 
             ComboBox {
@@ -116,12 +123,20 @@ Page {
                 }
             }
 
-            Button {
-                text: editPost === "" ? qsTr("Submit") : qsTr("Save")
-                anchors.horizontalCenter: parent.horizontalCenter
-                enabled: (editPost != "" || linkTitle.text.length > 0) /* official limits? */
-                         && ((selfLinkSwitch.checked && linkDescription.text.length > 0) || (!selfLinkSwitch.checked && linkUrl.acceptableInput))
-                onClicked: submit()
+            Row {
+                width: parent.width
+                Button {
+                    text: editPost === "" ? qsTr("Submit") : qsTr("Save")
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    enabled: (editPost != "" || linkTitle.text.length > 0) /* official limits? */
+                             && ((selfLinkSwitch.checked && linkDescription.text.length > 0) || (!selfLinkSwitch.checked && linkUrl.acceptableInput))
+                    onClicked: submit()
+                }
+                Button {
+                    id: previewBtn
+                    text: qsTr("Preview")
+                    checkable: true
+                }
             }
         }
     }

@@ -30,6 +30,13 @@ ToolButton {
     property url ico
     property color color
     property int size: 24
+
+    Rectangle {
+        anchors.fill: parent
+        color: Suru.color(Suru.Orange,0.2)
+        visible: parent.checked
+    }
+
     Image {
         anchors.centerIn: parent
         source: ico

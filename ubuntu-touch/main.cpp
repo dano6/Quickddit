@@ -33,6 +33,11 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+    if (qgetenv("QT_QUICK_CONTROLS_STYLE") == QString())
+    {
+        qputenv("QT_QUICK_CONTROLS_STYLE", "Suru");
+    }
+
     qmlRegisterType<AppSettings>("quickddit.Core", 1, 0, "AppSettings");
     qmlRegisterType<QuickdditManager>("quickddit.Core", 1, 0, "QuickdditManager");
     qmlRegisterType<LinkModel>("quickddit.Core", 1, 0, "LinkModel");
@@ -59,11 +64,6 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName("quickddit");
     app.setOrganizationDomain("dkland");
-    QSettings settings;
-    QString style = QQuickStyle::name();
-    if (settings.contains("style")) {
-        QQuickStyle::setStyle(settings.value("style").toString());
-    }
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
