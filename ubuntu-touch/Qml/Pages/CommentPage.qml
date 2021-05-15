@@ -167,6 +167,7 @@ Page {
     BusyIndicator {
         anchors.centerIn: parent
         running: !link
+        visible: running
     }
 
     ListView {

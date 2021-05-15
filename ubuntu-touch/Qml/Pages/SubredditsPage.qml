@@ -162,6 +162,7 @@ Page {
                 BusyIndicator {
                     anchors.centerIn: parent
                     running: subredditsView.count==0
+                    visible: running
                 }
             }
         }
@@ -184,6 +185,7 @@ Page {
             BusyIndicator {
                 anchors.centerIn: parent
                 running: multiredditVIew.count==0
+                visible: running
             }
         }
 

@@ -213,7 +213,7 @@ Page {
             anchors.fill: parent
             model: linkModel
             cacheBuffer: height*3
-            highlightFollowsCurrentItem: false
+            highlightFollowsCurrentItem: true
 
             Label {
                 anchors { bottom: linkListView.contentItem.top; horizontalCenter: parent.horizontalCenter; margins: 75 }
@@ -245,6 +245,7 @@ Page {
             BusyIndicator {
                 anchors.centerIn: parent
                 running: linkListView.count==0
+                visible: running
             }
         }
     }

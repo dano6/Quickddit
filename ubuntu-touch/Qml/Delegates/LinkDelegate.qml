@@ -101,7 +101,6 @@ ItemDelegate {
         text: link.title
         elide: Text.ElideRight
         maximumLineCount: compact && !thumb.visible ? 3 : 9999
-        height: thumb.visible && compact ? thumb.height - flairs.height : implicitHeight
         font.pointSize: 12
         font.weight: Font.DemiBold
         wrapMode: Text.Wrap

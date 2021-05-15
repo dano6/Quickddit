@@ -59,7 +59,7 @@ Page {
             }
 
             ToolButton {
-                icon.name: "applications-internet"
+                icon.name: "globe-symbolic"
                 onClicked: Qt.openUrlExternally(webView.url);
             }
         }
